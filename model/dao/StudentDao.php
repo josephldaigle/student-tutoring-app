@@ -41,4 +41,10 @@ interface StudentDao {
      * @param type $pidm students Banner ID
      */
     public function get_student_major($pidm);
+    
+    /**
+     * Fetches tutoring records for the student with $studentGCID
+     * @param type $studentGCID  the student's unique GCID
+     */
+    public function fetchStudentTutorials($studentGCID);
 }

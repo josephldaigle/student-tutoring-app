@@ -60,6 +60,9 @@ HTML;
                     </fieldset>
                 </span>
             </form>
+                                   
+            <a href="./?action=find-student-tutorials">+ Find a Student's Session</a>
+                                   
 HTML;
         
         //get the page footer

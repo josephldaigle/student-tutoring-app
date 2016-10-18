@@ -86,6 +86,16 @@ class MainController {
                 $controller->do_request(self::$HttpRequest);
                 break;
             
+            case 'find-student-tutorials':
+                $controller = new TutorialLookupController();
+                $controller->do_request(self::$HttpRequest);
+                break;
+            
+            case 'find-tutorial-records':
+                $controller = new TutorialLookupController();
+                $controller->do_request(self::$HttpRequest);
+                break;
+            
             default:    //user has requested resource that doesn't exist.
                 $view = new ResourcesNotAvailableView();
                 echo $view->output();
