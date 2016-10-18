@@ -1,0 +1,159 @@
+select * from baninst1.WSCTUTOR
+
+Select  v.pidm, LFM_NAME, BIRTH_DATE
+        from v_person v
+        where v.id = '929219129'
+        and student.registered_in_term(v.pidm, fg_current_term()) = 'Y';
+        
+        Select  v.pidm, LFM_NAME, BIRTH_DATE
+        from v_person v
+        where student.registered_in_term(v.pidm, fg_current_term()) = 'Y';
+        
+
+Select  v.pidm, v.id, v.LFM_NAME
+        from v_person v
+        where student.registered_in_term(v.pidm, fg_current_term()) = 'Y';
+        
+select e.pidm, v.id, v.LFM_NAME, E.SUBJ, e.term, E.TITLE, e.crn, e.course, e.sect, e.numb
+from v_person v LEFT JOIN v_current_enrolled e ON v.PIDM = e.PIDM
+where e.term = fg_current_term()
+order by v.id
+        
+SELECT * from v_person-- where id = '929219129'
+        
+select PROGRAM_CODE_1, MAJR_DESC_1 from v_student where PIDM = '90224678' 
+ 
+        
+select * from v_enrollment e where E.PIDM = '90224678' and e.term_code = '201608'
+
+select * from v_current_enrolled where pidm = '90224678' and term=fg_current_term()
+
+Select  pidm, last_name, first_name
+          from v_person v
+          where  v.id = '929164968'
+          and student.registered_in_term(v.pidm, fg_current_term()) = 'Y'
+          
+          
+          
+--APP QUERIES
+
+select distinct subj, numb, course, term, title, crn, STUDENT.SPRIDEN_PIDM('929164968') from (
+select * from v_current_enrolled where pidm = '90224678' and term='201605')
+
+select * from wscswid
+
+
+insert into wscswid values('90284039')
+
+select * from wscevnt
+
+insert into wscevnt values('STUTUT', 'Student Tutoring', 'N')
+
+
+Select v.id, v.pidm, v.lfm_name
+from v_person v
+
+
+
+select * from wphcuts
+
+
+
+INSERT INTO wsctutor (TUTOR_PIDM, STUDENT_PIDM, TUTORIAL_START_TIME,
+TUTORIAL_DURATION, CRN, TERM, TUTORIAL_NOTES) VALUES ('90284039','90270559', TO_DATE('2016-05-01 08:30', 'YYYY/MM/DD HH:MI'), 1.25, 148, 201605,
+'Test Review/ student failed to study prior to first exam, went over study time management and each question so student can review.')
+
+SELECT * FROM WSCTUTOR
+
+delete from WSCTUTOR
+
+
+select sysdate from dual
+
+INSERT INTO WSCTUTOR(TUTOR_GCID, 
+                STUDENT_GCID, 
+                RECORDER_GCID, 
+                TUTORIAL_START_TIME, 
+                TUTORIAL_END_TIME, 
+                COURSE_CRN, 
+                COURSE_SUBJECT, 
+                COURSE_NUMBER, 
+                COURSE_TITLE, 
+                COURSE_TERM, 
+                TUTORIAL_NOTES,
+                RECORDED_DATE)
+                        VALUES(929222111,
+                        929164968,
+                        929224216,
+                        TO_DATE('2001-04-26 09:30', 'YYYY/MM/DD HH:MI'),
+                        TO_DATE('2001-04-26 10:30', 'YYYY/MM/DD HH:MI'),
+                        '134',
+                        'MGNT',
+                        '3500',
+                        'Entrepreneurship & Small Bus',
+                        fg_current_term(),
+                        'Here are the notes',
+                        sysdate)
+                        
+                        
+--Faculty report queries
+
+
+/* Formatted on 7/13/2016 4:25:46 PM (QP5 v5.115.810.9015) */
+--still need to add in student's name
+SELECT   wst.student_gcid,
+         wst.tutorial_start_time,
+         wst.tutorial_end_time,
+         wst.tutorial_notes
+  FROM   (SELECT   crs.facultypidm, crs.coursereferencenumber
+            FROM      SVQ_CRN_ASSIGN crs
+                   LEFT JOIN
+                      v_person pers
+                   ON crs.FACULTYPIDM = PERS.PIDM
+           WHERE   crs.term = fg_current_term () AND crs.coursestatus = 'A') fac,
+         wsctutor wst
+ WHERE   fac.coursereferencenumber = wst.course_crn
+         AND wst.course_crn = '146'
+
+
+
+/* Formatted on 7/13/2016 4:25:36 PM (QP5 v5.115.810.9015) */
+SELECT   course_subject, course_title, course_number
+  FROM      SVQ_CRN_ASSIGN crs
+         LEFT JOIN
+            v_person pers
+         ON crs.FACULTYPIDM = PERS.PIDM,
+         (SELECT   DISTINCT course_crn,
+                            course_term,
+                            course_subject,
+                            course_title,
+                            course_number
+            FROM   wsctutor
+           WHERE   WSCTUTOR.COURSE_TERM = fg_current_term ()) tut
+ WHERE       crs.term = fg_current_term ()
+         AND crs.coursestatus = 'A'
+         AND crs.coursereferencenumber = tut.course_crn
+         AND crs.facultypidm = '90105112'
+
+select * from WSCTUTOR
+
+
+select distinct coursestatus from SVQ_CRN_ASSIGN
+
+select *
+from SVQ_CRN_ASSIGN crs
+where crs.term = fg_current_term()
+and crs.coursestatus <> 'A'
+
+
+
+-- find records where session duration is abnormal
+select round(((tutorial_end_time - tutorial_start_time) * 24),2) "Duration (hrs)"
+, wsctutor.*
+from wsctutor
+where round(((tutorial_end_time - tutorial_start_time) * 24),2) > 2
+or round(((tutorial_end_time - tutorial_start_time) * 24),2) < 0
+
+--fix abnormal duration records
+update wsctutor set tutorial_end_time = (tutorial_end_time + interval '12' hour)
+where (tutorial_end_time - tutorial_start_time) < 0

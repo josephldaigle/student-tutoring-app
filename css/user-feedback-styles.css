@@ -1,0 +1,30 @@
+/*
+ * Created on : May 19, 2016, 10:55:33 AM
+ * Author     : Joseph Daigle
+ *
+ *  Styling for user feed-back in UI.
+ */
+
+div.user-message {
+    margin-top: 3em;
+    clear: both;
+    background: lightgoldenrodyellow none repeat scroll 0% 0%;
+    padding: 0.5em 1em;
+}
+
+div.user-message ul {
+    list-style: none;
+    display: inline-block;
+}
+
+div.user-message::before {
+    content: "\f071";
+    font-family: FontAwesome;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: inherit;
+    color: #ffcc33;
+    display: inline-block;
+    margin-right: 1em;
+    font-size: 2em;
+}
