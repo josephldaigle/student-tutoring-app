@@ -291,5 +291,59 @@ HTML;
         
         return $html;
     }
+    
+    public function fetchStudentTutorials($studentGCID) {
+        try {
+            
+            $qry = "SELECT tut.student_gcid,
+                        student.first_name || ' ' || student.last_name student_name,
+                        to_char(tut.tutorial_start_time, 'mm/dd/yyyy') tutorial_date,
+                        tut.tutor_gcid,
+                        tutor.first_name || ' ' || tutor.last_name tutor_name,
+                        tut.course_subject,
+                        tut.course_number,
+                        tut.course_title,
+                        tut.course_crn,
+                        round( ((tut.tutorial_end_time - tut.tutorial_start_time) * 24 * 60))  \"duration (minutes)\",
+                        tut.recorder_gcid,
+                        recorder.first_name || ' ' || recorder.last_name recorder_name,
+                        to_char(tut.recorded_date, 'mm/dd/yyyy') recorded_on
+                    FROM baninst1.wsctutor tut
+                        LEFT JOIN v_person tutor ON tut.tutor_gcid = tutor.id
+                        LEFT JOIN v_person student ON tut.student_gcid = student.id
+                        LEFT JOIN v_person recorder ON tut.recorder_gcid = recorder.id
+                    WHERE tut.course_term = fg_current_term()
+                        AND tut.student_gcid = :GCID
+                    ORDER BY tutorial_date desc";
+
+            //Setup prepared statement
+            $stid = oci_parse($this->bannerDB, $qry);
+            
+            //bind data to query object
+            oci_bind_by_name($stid, ':GCID', $studentGCID);
+
+            //execute query
+            $r = oci_execute($stid);
+            
+            //return false if query fails to commit
+            if (!$r) {
+                $r =  "Failed to retrieve records from Banner.";
+                //TODO log statement that db query did not retrieve results
+            } else {
+                oci_fetch_all($stid, $r);
+            }
+
+            //release connection objects and return false
+            oci_free_statement($stid);
+            
+            return $r;
+                        
+        } catch (Exception $e) {
+            //close connections and return false on error
+            oci_free_statement($stid);
+            
+            return false;
+        }
+    }
 
 }
